@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 struct Stack{
@@ -6,7 +7,7 @@ struct Stack{
     int tos;
 };
 
-void push(struct Stack *, char);
+void push(struct Stack*, char);
 char pop(struct Stack*);
 
 int isOperand(char);
@@ -14,57 +15,55 @@ int isOperand(char);
 
 int prcd(char, char);
 // first char will be outside operator and second will be stack-top.
-// If prcd of outside op > stack-top then returns 1 otherwise 0
+// If prcd of outside op >= stack-top then returns 1 otherwise 0
 
 int isEmpty(struct Stack);
 // returns 1 when stack is empty otherwise 0
 
 void convert(char[], char[]);
-// first char[] = infix expn. and second char[] = empty ans array (postfix)
+// first char[] = infix expn. and second char[] = empty ans array (prefix)
 
 int main(){
-    char infix[20], postfix[20];
+    char infix[20],prefix[20];
     cout << "Enter a valid infix expression: ";
     cin >> infix;
-    convert(infix,postfix);
-    cout << "Postfix expression: " << postfix << endl;
+    convert(infix, prefix);
+    cout << "Prefix Expression: " << prefix << endl;
     return 0;
 }
 
-void convert(char infix[], char postfix[]){
+void convert(char infix[20], char prefix[20]){
     struct Stack S;
-    int i, j = 0;
-    int result;
+    int i,result,j = 0;
     S.tos = -1;
-
-    for(i = 0; infix[i]; i++){
-        char ch = infix[i]; 
+    
+    for(i = strlen(infix)-1; i >= 0; i--){
+        char ch = infix[i];
         if(isOperand(ch)){
-            postfix[j++] = ch;
+            prefix[j++] = ch;
         }
         else{
             while(!isEmpty(S)){
-                result = prcd(ch, S.arr[S.tos]);
-                if(!result){
-                    postfix[j++] = pop(&S);
+                if(!prcd(ch,S.arr[S.tos])){
+                    prefix[j++] = pop(&S);
                 }
                 else{
                     break;
                 }
             }
-            push(&S, ch);
+            push(&S,ch);
         }
     }
-
     while(!isEmpty(S)){
-        postfix[j++] = pop(&S);
+        prefix[j++] = pop(&S);
     }
-    postfix[j] = '\0';
+    prefix[j] = '\0';
+    strrev(prefix);
     return;
 }
 
 int isOperand(char ch){
-    if((ch >= 'a' && ch <= 'z') || 
+     if((ch >= 'a' && ch <= 'z') || 
        (ch >= 'A' && ch <= 'Z') || 
        (ch >= '1' && ch <= '9')){
            return 1;
@@ -77,18 +76,18 @@ int isEmpty(struct Stack S){
 }
 
 int prcd(char op1, char op2){
-    if(op2 == '$')
-        return 0;
-    else if(op1 == '$')
+    if(op1 == '$')
         return 1;
-    else if((op2 == '*') || (op2 == '/') || (op2 == '%'))
+    else if(op2 == '$')
         return 0;
-    else if((op1 == '*') || (op1 == '/') || (op1 == '%'))
+    else if(op1 == '*' || op1 == '/' || op1 == '%')
         return 1;
-    else if((op2 == '+') || (op2 == '-'))
+    else if(op2 == '*' || op2 == '/' || op2 == '%')
         return 0;
+    else if(op1 == '+' || op1 == '-')
+        return 1;
     else
-        return 1;
+        return 0;
 }
 
 void push(struct Stack *S, char ch){
