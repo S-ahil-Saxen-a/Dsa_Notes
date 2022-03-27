@@ -1,5 +1,5 @@
 // By using structure --->
-/* #include <iostream>
+#include <iostream>
 using namespace std;
 
 struct node{
@@ -92,11 +92,11 @@ void addAtBeg(struct node** ps, int x){
     p -> data = x;
     p -> next = *ps;
     *ps = p;
-} */
+} 
 
 
 // using class and objects -->
-#include <iostream>
+/* #include <iostream>
 using namespace std;
 class Node{
     public:
@@ -186,4 +186,4 @@ void addAtBeg(Node* &ps, int x){
     Node* p = new Node(x);
     p -> next = ps;
     ps = p;
-}
+} */
